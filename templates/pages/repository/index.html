@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="float-start mr-2">GUDANG LINKs</h1>
+                    <h1 class="float-start mr-2">REPOSITORY</h1>
                     <h3 class="card-title mt-2">Manajemen</h3>
                 </div>
                 <div class="col-sm-6">
@@ -66,7 +66,7 @@
 {% include 'includes/_all_javascripts.html' %}
 {% include 'includes/_page_javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '/page/system/repository/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="/page/system/repository/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+<script>const api = axios.create({ baseURL: '/page/repository/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="/page/repository/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
 
 {% endblock javascripts %}

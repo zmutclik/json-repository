@@ -45,36 +45,20 @@
                             <form id="form_">
                                 <input type="hidden" id="id" {% if repository %} value="{{repository.id}}" {% endif %}>
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Nama</label>
-                                    <input type="text" class="form-control" name="name" placeholder="Nama" {% if repository %} value="{{repository.name}}" readonly {% endif %} required>
+                                    <label for="form_key" class="form-label">KEY</label>
+                                    <input type="text" class="form-control" id="form_key" name="key" placeholder="K3Y" {% if data %} value="{{data.key}}" {% endif %} readonly>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="allocation" class="form-label">Peruntukan</label>
-                                    <input type="text" class="form-control" name="allocation" placeholder="Peruntukan Link" {% if repository %} value="{{repository.allocation}}" {% endif %} required>
+                                    <label for="form_repository" class="form-label">Nama Repository</label>
+                                    <input type="text" class="form-control" id="form_repository" name="repository" placeholder="Nama" {% if data %} value="{{data.repository}}" readonly {% endif %} required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="datalink" class="form-label">Isi Data</label>
-                                    <input type="text" class="form-control" name="datalink" placeholder="Data Link" {% if repository %} value="{{repository.datalink}}" {% endif %} required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="user" class="form-label">User</label>
-                                    <input type="text" class="form-control" name="user" placeholder="User" {% if repository %} value="{{repository.user}}" {% endif %} required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="text" class="form-control" name="password" placeholder="P45w012d" {% if repository %} value="{{repository.password}}" {% endif %} required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="active" class="form-label">Aktif</label>
-                                    <select class="form-select" aria-label="Default select" name="active">
-                                        <option value="true" {% if repository %}{% if repository.active %} selected {% endif %}{% endif %}>Aktif</option>
-                                        <option value="false" {% if repository %}{% if not repository.active %} selected {% endif %}{% endif %}>Tidak Aktif</option>
-                                    </select>
+                                    <label for="form_desc" class="form-label">Deskripsi</label>
+                                    <input type="text" class="form-control" id="form_desc" name="desc" placeholder="Deskripsi" {% if data %} value="{{data.desc}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
                                     <button type="submit" class="btn btn-primary">SIMPAN</button>
                                 </div>
-
                             </form>
                         </div>
                         <!-- /.card-body -->
@@ -98,7 +82,7 @@
 {% include 'includes/_all_javascripts.html' %}
 {% include 'includes/_form_javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '/page/system/repository/{{clientId}}/{{sessionId}}{% if repository %}/{{repository.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="/page/system/repository/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script>const api = axios.create({ baseURL: '/page/repository/{{clientId}}/{{sessionId}}{% if repository %}/{{repository.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="/page/repository/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
 
 {% endblock javascripts %}

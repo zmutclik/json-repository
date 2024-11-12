@@ -1,11 +1,12 @@
 from typing import Annotated, Any
 from enum import Enum
+import datetime
 
 from fastapi import APIRouter, Security, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
-from app.core.db.system import engine_db, get_db
+from app.core.db.app import engine_db, get_db
 from app.schemas import PageResponseSchemas
 
 from app.schemas.__system__.auth import UserSchemas
@@ -13,11 +14,11 @@ from app.services.__system__.auth import get_active_user
 
 
 router = APIRouter(
-    prefix="/system/repository",
+    prefix="/repository",
     tags=["FORM"],
 )
 
-pageResponse = PageResponseSchemas("templates", "pages/system/repository/")
+pageResponse = PageResponseSchemas("templates", "pages/repository/")
 db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
@@ -31,22 +32,22 @@ class PathJS(str, Enum):
 
 
 ###PAGES###############################################################################################################
-from app.repositories.__system__.repository import Repository
+from app.repositories.repository import Repository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository(req: req_page):
+def page_repository(req: req_page):
     return pageResponse.response("index.html")
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository_add(req: req_depends):
+def page_repository_add(req: req_depends):
     return pageResponse.response("form.html")
 
 
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository_form(id: int, req: req_depends, db=db):
-    pageResponse.addData("repository", Repository(db).get(id))
+def page_repository_form(id: int, req: req_depends, db=db):
+    pageResponse.addData("data", Repository(db).get(id))
     return pageResponse.response("form.html")
 
 
@@ -57,7 +58,7 @@ def page_js(req: req_nonAuth, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models.__system__ import RepositoryTable
+from app.models import RepositoryTable
 from sqlalchemy import select
 from datatables import DataTable
 
@@ -74,11 +75,10 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
         column_names=[
             "DT_RowId",
             "id",
-            "name",
-            "allocation",
-            "datalink",
-            "user",
-            "active",
+            "key",
+            "repository",
+            "desc",
+            "created_at",
         ],
         engine=engine_db,
         # callbacks=callbacks,
@@ -87,24 +87,25 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
 
 
 ###CRUD################################################################################################################
-from app.schemas.__system__.repository import (
-    RepositorysSchemas,
+from app.schemas.repository import (
+    RepositorySchemas,
     RepositorySave,
     RepositoryData,
 )
 
 
-@router.post("/{cId}/{sId}", response_model=RepositorysSchemas, status_code=201, include_in_schema=False)
+@router.post("/{cId}/{sId}", response_model=RepositorySchemas, status_code=201, include_in_schema=False)
 async def create(dataIn: RepositoryData, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
     data = RepositorySave.model_validate(dataIn.model_dump())
     data.created_user = c_user.username
+    data.key = repo.create_key()
     cdata = repo.create(data.model_dump())
 
     return cdata
 
 
-@router.post("/{cId}/{sId}/{id:int}", response_model=RepositorysSchemas, status_code=202, include_in_schema=False)
+@router.post("/{cId}/{sId}/{id:int}", response_model=RepositorySchemas, status_code=202, include_in_schema=False)
 async def update(dataIn: RepositoryData, id: int, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
     data = repo.get(id)

@@ -5,12 +5,13 @@ from .__system__.auth.registerPage import router as registerPage
 from .__system__.userPage import router as userPage
 from .__system__.scopePage import router as scopePage
 from .__system__.groupPage import router as groupPage
-from .__system__.repositoryPage import router as repositoryPage
+from .__system__.repositoryPage import router as sysrepositoryPage
 from .__system__.settingsPage import router as settingsPage
 from .__system__.menuPage import router as menuPage
 from .__system__.logsPage import router as logsPage
 from .__system__.documentationPage import router as documentationPage
 from .dashboardPage import router as dashboardPage
+from .repositoryPage import router as repositoryPage
 
 ###################################################################################################################
 app = FastAPI(
@@ -28,16 +29,18 @@ def read_sub():
 
 
 ### Sub FastAPI ###
-app.include_router(dashboardPage)
 app.include_router(profilePage)
 app.include_router(userPage)
 app.include_router(scopePage)
 app.include_router(groupPage)
-app.include_router(repositoryPage)
+app.include_router(sysrepositoryPage)
 app.include_router(settingsPage)
 app.include_router(menuPage)
 app.include_router(logsPage)
 app.include_router(documentationPage)
+
+app.include_router(dashboardPage)
+app.include_router(repositoryPage)
 
 
 # ###################################################################################################################

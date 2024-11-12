@@ -4,6 +4,7 @@ from starlette.staticfiles import StaticFiles
 
 from app.core import config
 from app.routers import root as root
+from app.core.db.app import get_db
 
 
 def create_app() -> FastAPI:

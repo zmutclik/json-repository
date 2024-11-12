@@ -74,7 +74,7 @@ if os.path.exists(DB_FILE):
                         **{
                             "name": "MariaDB",
                             "allocation": "MariaDB",
-                            "datalink": "mysql+pymysql://{user}:{password}@127.0.0.1:3307/db",
+                            "datalink": "mysql+pymysql://{user}:{password}@127.0.0.1:3307/repo__json",
                             "user": "root",
                             "password": "password",
                             "active": True,

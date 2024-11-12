@@ -4,25 +4,25 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '/page/system/repository/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '/page/repository/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
         },
-        "paging": false,
+        "paging": true,
         "lengthChange": false,
         "searching": false,
         "ordering": true,
         "info": false,
         "autoWidth": false,
         "responsive": true,
+        "lengthMenu": [20, 40, 60, 80, 100],
+        "pageLength": 20,
         columns: [
-            { "data": "name", "title": "NAMA", },
-            { "data": "allocation", "title": "PERUNTUKAN", },
-            { "data": "datalink", "title": "DATALINK", },
-            { "data": "user", "title": "USER", },
-            { "data": "active", "title": "AKTIF", },
-            { "data": "id", "title": "" },
+            { "width": "15%", "data": "key", "title": "KEY", },
+            { "width": "30%", "data": "repository", "title": "NAMA", },
+            { "width": "50%", "data": "desc", "title": "DESKRIPSI", },
+            { "width": "5%", "data": "id", "title": "" },
         ],
         columnDefs: [{
             sClass: "right", searchable: false, orderable: false, bSortable: false, targets: -1, sWidth: "0px",
@@ -37,11 +37,11 @@ $(document).ready(function () {
     });
 
     $("#btnTambah").on("click", function () {
-        window.location.href = '/page/system/repository/{{clientId}}/{{sessionId}}/add';
+        window.location.href = '/page/repository/{{clientId}}/{{sessionId}}/add';
     });
 
     $("#table_").on("click", '.btnEdit', function () {
-        window.location.href = '/page/system/repository/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
+        window.location.href = '/page/repository/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
     });
 
     $("#table_").on("click", '.btnDelete', function () {

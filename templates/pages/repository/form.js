@@ -1,10 +1,4 @@
 var form_ = $("#form_").validate({
-    rules: {
-        name: { required: true },
-        type: { required: true },
-        value: { required: true },
-        active: { required: true },
-    },
     errorElement: 'div',
     errorPlacement: function (error, element) {
         error.addClass('invalid-feedback');
@@ -18,10 +12,10 @@ var form_ = $("#form_").validate({
     },
 });
 $(document).ready(function () {
-    $("#form_ input[name='name']").focus();
+    $("#form_ input[name='repository']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '/page/system/repository/';
+        window.location.href = '/page/repository/';
     });
 
     $("#form_").on("submit", function () {
@@ -30,18 +24,14 @@ $(document).ready(function () {
             $("#form_").LoadingOverlay("show");
 
             api.post('', {
-                "name": $("#form_ input[name='name']").val(),
-                "allocation": $("#form_ input[name='allocation']").val(),
-                "datalink": $("#form_ input[name='datalink']").val(),
-                "user": $("#form_ input[name='user']").val(),
-                "password": $("#form_ input[name='password']").val(),
-                "active": $("#form_ select[name='active']").val(),
+                "repository": $("#form_repository").val(),
+                "desc": $("#form_desc").val(),
             })
                 .then(function (response) {
                     idU = response.data.id;
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '/page/system/repository/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '/page/repository/{{clientId}}/{{sessionId}}/' + idU;
                         });
                 })
                 .catch(function (error) {
@@ -60,6 +50,15 @@ $(document).ready(function () {
                             de[v.loc[1]] = v["msg"];
                         });
                         form_.showErrors(de);
+                    }
+                    if (error.status == 500) {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "error",
+                            title: "System Applikasi Error.!",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
                     }
                 })
                 .finally(() => {
