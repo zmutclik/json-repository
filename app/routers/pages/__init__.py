@@ -12,6 +12,8 @@ from .__system__.logsPage import router as logsPage
 from .__system__.documentationPage import router as documentationPage
 from .dashboardPage import router as dashboardPage
 from .repositoryPage import router as repositoryPage
+from .dataPage import router as dataPage
+from .folderPage import router as folderPage
 
 ###################################################################################################################
 app = FastAPI(
@@ -41,6 +43,8 @@ app.include_router(documentationPage)
 
 app.include_router(dashboardPage)
 app.include_router(repositoryPage)
+app.include_router(dataPage)
+app.include_router(folderPage)
 
 
 # ###################################################################################################################

@@ -35,17 +35,17 @@ from app.repositories.__system__.repository import Repository
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository(req: req_page):
+def page_system_gudanglink(req: req_page):
     return pageResponse.response("index.html")
 
 
 @router.get("/{cId}/{sId}/add", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository_add(req: req_depends):
+def page_system_gudanglink_add(req: req_depends):
     return pageResponse.response("form.html")
 
 
 @router.get("/{cId}/{sId}/{id:int}", response_class=HTMLResponse, include_in_schema=False)
-def page_system_repository_form(id: int, req: req_depends, db=db):
+def page_system_gudanglink_form(id: int, req: req_depends, db=db):
     pageResponse.addData("repository", Repository(db).get(id))
     return pageResponse.response("form.html")
 

@@ -12,7 +12,7 @@ class FilesTable(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     repo_key = Column(String(32), index=True)
-    folder_id = Column(Integer, ForeignKey("files.id"), index=True)
+    folder_id = Column(Integer, ForeignKey("folder.id"), index=True)
 
     key = Column(String(32), unique=True, index=True)
     label = Column(String(32), unique=True, index=True)
@@ -25,8 +25,8 @@ class FilesTable(Base):
     created_user = Column(String(50), nullable=False)
     deleted_user = Column(String(50), nullable=True)
 
-    _SAVE = relationship("FilesTable", back_populates="_FILES", uselist=False)
-    _FOLDER = relationship("FilesTable", back_populates="_FILES")
+    _SAVE = relationship("FilesSaveTable", back_populates="_FILES", uselist=False)
+    _FOLDER = relationship("FolderTable", back_populates="_FILES")
 
 
 class FilesSaveTable(Base):

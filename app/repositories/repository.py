@@ -2,6 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models import RepositoryTable as MainTable
 from key_generator.key_generator import generate as key_generator
+from app.core.db.repo import create_folder
 
 
 class Repository:
@@ -28,6 +29,9 @@ class Repository:
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
+
+        create_folder(data.key)
+
         return data
 
     def update(self, id: int, dataIn: dict):

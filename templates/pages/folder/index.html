@@ -1,0 +1,118 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Gudang JSON {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% include 'includes/_page_stylesheets.html' %}
+{% include 'includes/_all_stylesheets.html' %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<style>
+  #table_ tbody tr:hover {
+    background-color: cadetblue;
+    cursor: pointer;
+  }
+
+  #table_ tr.even:hover td.sorting_1 {
+    background-color: cadetblue;
+    cursor: pointer;
+  }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="float-start mr-2">FOLDER</h1>
+          <h3 class="card-title mt-2">Repository</h3>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-end">
+            <button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button>
+            <!-- <div class="row">
+              <div class="col-sm-6"></div>
+              <div class="col-sm-6"><button type="button" class="btn btn-block btn-success btn-sm btnUpload" data-bs-toggle="modal" data-bs-target="#uploadmodal">UPLOAD</button></div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="table_" class="table table-bordered table-striped">
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- Modal -->
+<!-- <div class="modal fade" id="uploadmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Folder</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Nama Dokumen</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Data JSON</label>
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% include 'includes/_all_javascripts.html' %}
+{% include 'includes/_page_javascripts.html' %}
+<!-- ------------------- -->
+<script>const api = axios.create({ baseURL: '/page/folder/{{clientId}}/{{sessionId}}/{{repo_key}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="/page/folder/{{clientId}}/{{sessionId}}/{{app_version}}/{{repo_key}}/index.js"></script>
+
+{% endblock javascripts %}
