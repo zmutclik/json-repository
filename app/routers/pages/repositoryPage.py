@@ -91,17 +91,13 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
 
 
 ###CRUD################################################################################################################
-from app.schemas.repository import (
-    RepositorySchemas,
-    RepositorySave,
-    RepositoryData,
-)
+from app.schemas.repository import RepositorySchemas
 
 
-@router.post("/{cId}/{sId}", response_model=RepositoryData, status_code=201, include_in_schema=False)
+@router.post("/{cId}/{sId}", response_model=RepositorySchemas, status_code=201, include_in_schema=False)
 async def create(dataIn: RepositorySchemas, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
-    data = RepositorySave.model_validate(dataIn.model_dump())
+    data = RepositorySchemas.model_validate(dataIn.model_dump())
     data.created_user = c_user.username
     data.key = repo.create_key()
     cdata = repo.create(data.model_dump())
@@ -109,7 +105,7 @@ async def create(dataIn: RepositorySchemas, req: req_depends, c_user: c_user_sco
     return cdata
 
 
-@router.post("/{cId}/{sId}/{id:int}", response_model=RepositoryData, status_code=202, include_in_schema=False)
+@router.post("/{cId}/{sId}/{id:int}", response_model=RepositorySchemas, status_code=202, include_in_schema=False)
 async def update(dataIn: RepositorySchemas, id: int, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
     data = repo.get(id)

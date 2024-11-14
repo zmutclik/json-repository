@@ -12,8 +12,14 @@ class Repository:
     def get(self, id: int):
         return self.session.query(MainTable).filter(MainTable.id == id, MainTable.deleted_at == None).first()
 
+    def all(self):
+        return self.session.query(MainTable).filter(MainTable.deleted_at == None).order_by(MainTable.repository).all()
+
     def getKey(self, key: str):
         return self.session.query(MainTable).filter(MainTable.key == key, MainTable.deleted_at == None).first()
+
+    def getRepo(self, repo: str):
+        return self.session.query(MainTable).filter(MainTable.repository == repo, MainTable.deleted_at == None).first()
 
     def create_key(self):
         passkey = key_generator(1, "", 2, 6, type_of_value="hex", capital="mix", extras=[]).get_key()
