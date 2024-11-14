@@ -10,6 +10,6 @@ router = APIRouter(tags=["AUTH"])
 
 
 @router.get("/me", response_model=UserResponse)
-async def root(request: Request, current_user: Annotated[UserResponse, Security(get_current_user, scopes=[])], db: Session = Depends(get_db)):
+def root(request: Request, current_user: Annotated[UserResponse, Security(get_current_user, scopes=[])], db: Session = Depends(get_db)):
     repo = UsersRepository(db)
     return repo.get(current_user.username)

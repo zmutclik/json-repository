@@ -43,6 +43,9 @@ app.mount("/static", StaticFiles(directory="files/static", html=False), name="st
 app.include_router(root.router)
 app.include_router(api.token)
 app.include_router(api.me)
+app.include_router(api.repo)
+app.include_router(api.folder)
+app.include_router(api.json)
 
 ## MAIN PAGE ###
 app.mount("/page", pages.app)
@@ -55,6 +58,7 @@ from fastapi import BackgroundTasks
 from app.services.__system__ import LogServices
 
 if not config.SESSION_DISABLE:
+
     @app.middleware("http")
     async def add_process_time_header(request: Request, call_next):
         logs = LogServices(config.CLIENTID_KEY, config.SESSION_KEY, config.APP_NAME)

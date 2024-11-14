@@ -65,9 +65,13 @@ from datatables import DataTable
 
 @router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
 def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
-    query = select(RepositoryTable, RepositoryTable.id.label("DT_RowId")).filter(
-        RepositoryTable.deleted_at == None,
-    ).order_by(RepositoryTable.repository)
+    query = (
+        select(RepositoryTable, RepositoryTable.id.label("DT_RowId"))
+        .filter(
+            RepositoryTable.deleted_at == None,
+        )
+        .order_by(RepositoryTable.repository)
+    )
 
     datatable: DataTable = DataTable(
         request_params=params,
@@ -94,8 +98,8 @@ from app.schemas.repository import (
 )
 
 
-@router.post("/{cId}/{sId}", response_model=RepositorySchemas, status_code=201, include_in_schema=False)
-async def create(dataIn: RepositoryData, req: req_depends, c_user: c_user_scope, db=db):
+@router.post("/{cId}/{sId}", response_model=RepositoryData, status_code=201, include_in_schema=False)
+async def create(dataIn: RepositorySchemas, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
     data = RepositorySave.model_validate(dataIn.model_dump())
     data.created_user = c_user.username
@@ -105,8 +109,8 @@ async def create(dataIn: RepositoryData, req: req_depends, c_user: c_user_scope,
     return cdata
 
 
-@router.post("/{cId}/{sId}/{id:int}", response_model=RepositorySchemas, status_code=202, include_in_schema=False)
-async def update(dataIn: RepositoryData, id: int, req: req_depends, c_user: c_user_scope, db=db):
+@router.post("/{cId}/{sId}/{id:int}", response_model=RepositoryData, status_code=202, include_in_schema=False)
+async def update(dataIn: RepositorySchemas, id: int, req: req_depends, c_user: c_user_scope, db=db):
     repo = Repository(db)
     data = repo.get(id)
     if data is None:

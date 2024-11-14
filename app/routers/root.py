@@ -15,11 +15,6 @@ def dashboard(req: req_page):
     return pageResponse.response("index2.html")
 
 
-# @router.get("/", include_in_schema=False)
-# async def root(request: Request):
-#     return {"message": "Hello BOZ " + request.client.host + " !!!"}
-
-
 @router.get("/favicon.ico", include_in_schema=False)
 def favicon(request: Request):
     request.state.islogsave = False
