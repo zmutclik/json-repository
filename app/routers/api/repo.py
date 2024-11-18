@@ -24,10 +24,12 @@ def get(req: Request, c_user: c_user_scope, db=db):
     return Repository(db).all()
 
 
-def get_data(repo: Repository, repo_search):
+def get_repo(repo: Repository, repo_search):
     data = repo.getKey(repo_search)
     if data is None:
         data = repo.getRepo(repo_search)
+    if data is None:
+        raise HTTPException(status_code=400, detail="Data Tida ada.")
     return data
 
 
@@ -37,11 +39,7 @@ def get(repo: str, req: Request, c_user: c_user_scope, db=db):
     - **repo** : Repository Key atau bisa juga berisi Nama Repository
     """
     r3po = Repository(db)
-    data = get_data(r3po, repo)
-    if data is None:
-        raise HTTPException(status_code=400, detail="Data Tida ada.")
-
-    return data
+    return get_repo(r3po, repo)
 
 
 @router.put("/{repo}", response_model=RepositorySchemas, summary="Update Nama atau Deskripsi Repository")
@@ -50,8 +48,5 @@ def update(dataIn: RepositoryDataPut, repo: str, req: Request, c_user: c_user_sc
     - **repo** : Repository Key atau bisa juga berisi Nama Repository
     """
     r3po = Repository(db)
-    data = get_data(r3po, repo)
-    if data is None:
-        raise HTTPException(status_code=400, detail="Data Tida ada.")
-
+    data = get_repo(r3po, repo)
     return r3po.update(data.id, dataIn.model_dump())

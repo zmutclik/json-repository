@@ -18,3 +18,9 @@ class ServerTable(Base):
     password = Column(String(50))
     path = Column(String(256))
     default = Column(Boolean)
+
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    updated_at = Column(TIMESTAMP, nullable=True, onupdate=func.now())
+    deleted_at = Column(TIMESTAMP, nullable=True)
+    created_user = Column(String(50), nullable=False)
+    deleted_user = Column(String(50), nullable=True)

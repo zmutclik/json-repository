@@ -1,10 +1,15 @@
 from typing import Annotated, Dict
-from fastapi import APIRouter, Request, Security, Depends
+from datetime import datetime
+from fastapi import APIRouter, Request, Security, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.db.app import get_db
 
 from app.schemas.__system__.auth import UserSchemas
+from app.repositories import Repository, FolderRepository, DocumentRepository, RefServerRepository
+from .repo import get_repo
 from app.services.__system__.auth import get_active_user
+from app.services.document import DocumentSave
+from app.schemas.document import DocumentSchemas, DocumentUpload
 
 router = APIRouter(
     prefix="",
@@ -43,7 +48,7 @@ def get_folder_spesific(user_access: str, repo_key: str, folder_key: str, req: R
     pass
 
 
-@router.get("/{user_access}/{repo_key}/{folder_key}/{key}", response_model=Dict, summary="Get All Document JSON in Folder with Spesific filter")
+@router.get("/json/{user_access}/{repo_key}/{folder_key}/{key}", response_model=Dict, summary="Get All Document JSON in Folder with Spesific filter")
 def get_single_spesific(user_access: str, repo_key: str, folder_key: str, key: str, req: Request, db=db):
     """
     - **User Access** : diganakan untuk LOG user yang akses Dokumen ini
@@ -54,22 +59,35 @@ def get_single_spesific(user_access: str, repo_key: str, folder_key: str, key: s
     pass
 
 
-@router.post("/json/{repo}", response_model=Dict, summary="Upload Document JSON in NEW Folder")
-async def upload_document(repo: str, req: Request, c_user: c_user_scope, db=db):
+@router.post("/json", response_model=DocumentSchemas, summary="Upload Document JSON in NEW Folder")
+async def upload_document(dataIn: DocumentUpload, req: Request, c_user: c_user_scope, db=db):
     """
     Upload Dokumen JSON yang Foldernya dibuatkan Baru dengan nama Folder disamakan dengan Folder Key yang dibuat Random.
 
-    - **repo** : Berisi Repository Key, tapi juga bisa di isi Nama Repository
+    - **repo_key** : Berisi Repository Key, tapi juga bisa di isi Nama Repository
+    - **folder_key** : Tidak Wajib di isi, Berisi Folder Key, tapi juga bisa di isi Nama Folder
+    - **label** : Tidak Wajib di isi, nama File jika kosong otomatis ber label Key File
+    - **data** : berisi data yang ingin di simpan
     """
-    pass
+    repo = get_repo(Repository(db), dataIn.repo_key)
+    folder = FolderRepository(db).getKey(dataIn.folder_key)
+    if dataIn.folder_key is None:
+        folder = FolderRepository(db).create_random(repo.key, c_user.username)
 
+    document_key = DocumentRepository(db).create_key()
+    document_label = dataIn.label
+    if document_label is None:
+        document_label = document_key
 
-@router.post("/json/{repo}/{folder}", response_model=Dict, summary="Upload Document JSON in Specific Exist Folder")
-async def upload_document_folder(repo: str, req: Request, c_user: c_user_scope, db=db):
-    """
-    Upload Dokumen JSON yang tanpa membuat Folder Baru.
+    document_path = DocumentSave(dataIn.data, repo.key, folder.key, document_key)
+    document_data = DocumentSchemas(
+        folder_id=folder.id,
+        folder_key=folder.key,
+        repo_key=repo.key,
+        key=document_key,
+        path=document_path,
+        label=document_label,
+        created_user=c_user.username,
+    )
 
-    - **repo** : Berisi Repository Key, tapi juga bisa di isi Nama Repository
-    - **folder** : Berisi Folder Key, tapi juga bisa di isi Nama Folder
-    """
-    pass
+    return DocumentRepository(db).create(document_data.model_dump())

@@ -1,12 +1,11 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-from app.models import RepositoryTable as MainTable
+from app.models import FolderTable as MainTable
 from key_generator.key_generator import generate as key_generator
-from app.core.db.repo import create_folder
 from app.core.config import config
 
 
-class Repository:
+class FolderRepository:
     def __init__(self, db_session: Session) -> None:
         self.session = db_session
 
@@ -14,13 +13,13 @@ class Repository:
         return self.session.query(MainTable).filter(MainTable.id == id, MainTable.deleted_at == None).first()
 
     def all(self):
-        return self.session.query(MainTable).filter(MainTable.deleted_at == None).order_by(MainTable.repository).all()
+        return self.session.query(MainTable).filter(MainTable.deleted_at == None).order_by(MainTable.folder).all()
 
     def getKey(self, key: str):
         return self.session.query(MainTable).filter(MainTable.key == key, MainTable.deleted_at == None).first()
 
-    def getRepo(self, repo: str):
-        return self.session.query(MainTable).filter(MainTable.repository == repo, MainTable.deleted_at == None).first()
+    def getFolder(self, folder: str):
+        return self.session.query(MainTable).filter(MainTable.folder == folder, MainTable.deleted_at == None).first()
 
     def create_key(self):
         passkey = key_generator(1, "", config.MIN_KEY, config.MAX_KEY, type_of_value="hex", capital="mix", extras=[]).get_key()
@@ -30,14 +29,16 @@ class Repository:
         else:
             return passkey
 
+    def create_random(self, repo_key: str, created_user: str):
+        folder_data = {"repo_key": repo_key, "key": self.create_key(), "created_user": created_user}
+        folder_data["folder"] = folder_data["key"]
+        return self.create(folder_data)
+
     def create(self, dataIn):
         data = MainTable(**dataIn)
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
-
-        create_folder(data.key)
-
         return data
 
     def update(self, id: int, dataIn: dict):

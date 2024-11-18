@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.core import config
 
-from app.models import RepositoryTable, RefServerTable
+from app.models import RepositoryTable, RefServerTable, FolderTable, FolderSizeTable, FilesTable, FilesSaveTable
 
 # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_textual_sql.htm
 engine_db = create_engine(config.DATABASE)
@@ -15,6 +15,10 @@ SessionLocal.configure(
         RefServerTable: engine_db,
         #############################################
         RepositoryTable: engine_db,
+        FolderTable: engine_db,
+        FolderSizeTable: engine_db,
+        FilesTable: engine_db,
+        FilesSaveTable: engine_db,
     }
 )
 if not engine_db.dialect.has_table(table_name="repository", connection=conn_db):

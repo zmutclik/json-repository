@@ -49,7 +49,7 @@ def form_login(
     )
 
 
-@router.get("/{clientId}/{sessionId}/login.js", include_in_schema=False)
+@router.get("/{clientId}/{sessionId}/login.js", response_class=HTMLResponse, include_in_schema=False)
 def js_login(clientId: str, sessionId: str, request: Request, next: str = None):
     request.state.islogsave = False
     if next is None or next == "None":

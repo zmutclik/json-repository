@@ -4,7 +4,7 @@ from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app.core.db import BaseRepo as Base
+from app.core.db import Base as Base
 
 
 class FilesTable(Base):
@@ -24,6 +24,10 @@ class FilesTable(Base):
     deleted_at = Column(TIMESTAMP, nullable=True)
     created_user = Column(String(50), nullable=False)
     deleted_user = Column(String(50), nullable=True)
+
+    @hybrid_property
+    def folder_key(self) -> str:
+        return self._FOLDER.key
 
     _SAVE = relationship("FilesSaveTable", back_populates="_FILES", uselist=False)
     _FOLDER = relationship("FolderTable", back_populates="_FILES")

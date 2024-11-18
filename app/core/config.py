@@ -21,6 +21,9 @@ class Config(BaseModel):
     TOKEN_EXPIRED: int
     ALGORITHM: str
 
+    MIN_KEY: int = 2
+    MAX_KEY: int = 6
+
     DATABASE: Union[str, None] = None
     RABBITMQ: Union[str, None] = None
     CORS: Union[list, None] = None
