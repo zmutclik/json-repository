@@ -16,9 +16,10 @@ $(document).ready(function () {
         "info": false,
         "autoWidth": false,
         "responsive": true,
-        "lengthMenu": [20, 40, 60, 80, 100],
-        "pageLength": 20,
+        "lengthMenu": [10, 20, 40, 60, 80, 100],
+        "pageLength": 10,
         columns: [
+            { "width": "3%", "data": "row_number", "title": "NO", "orderable": false },
             { "width": "8%", "data": "key", "title": "KEY", "orderable": false },
             { "width": "75%", "data": "repository", "title": "REPOSIRORY NAME", },
             { "width": "10%", "data": "key", "title": "COUNT", },
@@ -36,6 +37,6 @@ $(document).ready(function () {
 
 
     $("#table_").on("click", 'td', function () {
-        window.location.href = '/page/folder/' + $(this).parents('tr').find('td:eq(0)').text();
+        window.location.href = '/page/folder/' + $(this).parents('tr').find('td:eq(1)').text();
     });
 });

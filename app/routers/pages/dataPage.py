@@ -43,13 +43,17 @@ def page_js(req: req_nonAuth, pathFile: PathJS):
 
 ###DATATABLES##########################################################################################################
 from app.models import RepositoryTable
-from sqlalchemy import select
+from sqlalchemy import select, func, desc
 from datatables import DataTable
 
 
 @router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
 def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
-    query = select(RepositoryTable, RepositoryTable.id.label("DT_RowId")).filter(
+    query = select(
+        RepositoryTable,
+        RepositoryTable.id.label("DT_RowId"),
+        func.row_number().over(order_by=desc(RepositoryTable.created_at)).label("row_number"),
+    ).filter(
         RepositoryTable.deleted_at == None,
     )
 
@@ -63,6 +67,7 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
             "repository",
             "desc",
             "created_at",
+            "row_number",
         ],
         engine=engine_db,
         # callbacks=callbacks,

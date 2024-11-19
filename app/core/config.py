@@ -74,5 +74,5 @@ with engine_db.begin() as connection:
             DATABASE=repository(db, "MariaDB"),
             RABBITMQ=repository(db, "RabbitMQ"),
             CORS=crossOrigin(db),
-            SESSION_DISABLE=False,
+            SESSION_DISABLE=True,
         )
