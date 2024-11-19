@@ -12,8 +12,8 @@ class DocumentRepository:
     def get(self, id: int):
         return self.session.query(MainTable).filter(MainTable.id == id, MainTable.deleted_at == None).first()
 
-    def all(self):
-        return self.session.query(MainTable).filter(MainTable.deleted_at == None).order_by(MainTable.folder).all()
+    def all(self, folder_id: int):
+        return self.session.query(MainTable).filter(MainTable.deleted_at == None, MainTable.folder_id == folder_id).order_by(MainTable.label).all()
 
     def getKey(self, key: str):
         return self.session.query(MainTable).filter(MainTable.key == key, MainTable.deleted_at == None).first()

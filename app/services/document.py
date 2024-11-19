@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from app.repositories import RefServerRepository, Repository, FolderRepository, DocumentRepository
+from app.repositories import RefServerRepository
 from app.core.db.app import engine_db, get_db
 
 
@@ -49,24 +49,14 @@ def DocumentSave(dataJSON: dict, repo_key: str, folder_key: str, key: str, creat
             return path
 
 
-def DocumentOpen(repo_key: str, folder_key: str, key: str):
+def DocumentOpen(file_path: str, key: str):
     with engine_db.begin() as connection:
         with Session(bind=connection) as db:
-            repo = Repository(db).getKey(repo_key)
-            if repo is None:
-                raise HTTPException(status_code=400, detail="Repo Tidak ada.")
-            fold = FolderRepository(db).getKey(folder_key)
-            if fold is None:
-                raise HTTPException(status_code=400, detail="Folder Tidak ada.")
-            file = DocumentRepository(db).getKey(key)
-            if file is None:
-                raise HTTPException(status_code=400, detail="Data Tidak ada.")
-
             refserver = RefServerRepository(db).local()
             server_path = refserver.path
-            filePath = server_path + "" + file.path + "/{}".format(key)
+            filePath = server_path + "" + file_path + "/{}".format(key)
 
-            if not os.path.isdir(server_path + "" + file.path):
+            if not os.path.isdir(server_path + "" + file_path):
                 raise HTTPException(status_code=400, detail="Folder Tidak Tersedia.")
             if not os.path.isfile(filePath):
                 raise HTTPException(status_code=400, detail="File Tidak Tersedia.")

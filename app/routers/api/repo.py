@@ -8,6 +8,7 @@ from app.services.__system__.auth import get_active_user
 
 from app.schemas.repository import RepositorySchemas, RepositoryDataPut
 from app.repositories.repository import Repository
+from .__helper import get_repo
 
 router = APIRouter(
     prefix="/repo",
@@ -22,15 +23,6 @@ c_user_scope = Annotated[UserSchemas, Security(get_active_user, scopes=[])]
 def get(req: Request, c_user: c_user_scope, db=db):
     """"""
     return Repository(db).all()
-
-
-def get_repo(repo: Repository, repo_search):
-    data = repo.getKey(repo_search)
-    if data is None:
-        data = repo.getRepo(repo_search)
-    if data is None:
-        raise HTTPException(status_code=400, detail="Data Tida ada.")
-    return data
 
 
 @router.get("/{repo}", response_model=RepositorySchemas, summary="Get Detail Data of Repository")

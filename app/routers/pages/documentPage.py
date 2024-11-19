@@ -11,13 +11,15 @@ from app.schemas import PageResponseSchemas
 from app.schemas.__system__.auth import UserSchemas
 from app.services.__system__.auth import get_active_user
 from app.services.document import DocumentOpen
+from app.repositories import Repository, FolderRepository, DocumentRepository
+from app.core.db.app import engine_db, get_db
 
 router = APIRouter(
     prefix="/document",
     tags=["FORM"],
 )
 pageResponse = PageResponseSchemas("templates", "pages/document/")
-# db: Session = Depends(get_db)
+db: Session = Depends(get_db)
 req_page = Annotated[PageResponseSchemas, Depends(pageResponse.page)]
 req_depends = Annotated[PageResponseSchemas, Depends(pageResponse.pageDepends)]
 req_nonAuth = Annotated[PageResponseSchemas, Depends(pageResponse.pageDependsNonUser)]
@@ -46,7 +48,16 @@ def page_js(repo_key: str, folder_key: str, req: req_nonAuth, pathFile: PathJS):
 
 
 @router.get("/{cId}/{sId}/{repo_key}/{folder_key}/{key}", response_model=Dict)
-def page_js(repo_key: str, folder_key: str, key: str, req: req_page):
+def page_js(repo_key: str, folder_key: str, key: str, req: req_page, db=db):
+    repo = Repository(db).getKey(repo_key)
+    if repo is None:
+        raise HTTPException(status_code=400, detail="Repo Tidak ada.")
+    fold = FolderRepository(db).getKey(folder_key)
+    if fold is None:
+        raise HTTPException(status_code=400, detail="Folder Tidak ada.")
+    file = DocumentRepository(db).getKey(key)
+    if file is None:
+        raise HTTPException(status_code=400, detail="Data Tidak ada.")
     return DocumentOpen(repo_key, folder_key, key)
 
 
@@ -55,14 +66,11 @@ from app.models import FilesTable
 from sqlalchemy import select, func, desc
 from datatables import DataTable
 from app.core import config
-from app.core.db.app import engine_db, get_db
 from app.repositories import FolderRepository
 
 
 @router.post("/{cId}/{sId}/{repo_key}/{folder_key}/datatables", status_code=202, include_in_schema=False)
-def get_datatables(
-    repo_key: str, folder_key: str, params: dict[str, Any], req: req_depends, c_user: c_user_scope, db: Session = Depends(get_db)
-) -> dict[str, Any]:
+def get_datatables(repo_key: str, folder_key: str, params: dict[str, Any], req: req_depends, c_user: c_user_scope, db=db) -> dict[str, Any]:
     folder = FolderRepository(db).getKey(folder_key)
     query = select(
         FilesTable,

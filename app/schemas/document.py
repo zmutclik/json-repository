@@ -16,7 +16,7 @@ class DocumentSchemas(BaseModel):
 
 
 class DocumentUpload(BaseModel):
-    repo_key: str = Field(examples=["r3p0_k3y"])
-    folder_key: Optional[str] = Field(default=None, examples=["F0ld3r_k3y"])
+    repo: str = Field(examples=["r3p0"])
+    folder: Optional[str] = Field(default=None, examples=["F0ld3r"])
     label: Optional[str] = Field(default=None, examples=["nama_file"])
     data: dict

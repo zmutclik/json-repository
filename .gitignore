@@ -164,6 +164,7 @@ cython_debug/
 #######################################################################################################################
 .vscode
 files/database/db/*
+files/database/json/
 files/temp/*
 
 # !files/database/log/.gitkeep
