@@ -21,7 +21,7 @@ $(document).ready(function () {
         columns: [
             { "width": "5%", "data": "row_number", "title": "NO", "orderable": false },
             { "width": "10%", "data": "key", "title": "KEY", "orderable": false },
-            { "width": "40%", "data": "label", "title": "FOLDER NAME", },
+            { "width": "40%", "data": "label", "title": "DOCUMENT NAME", },
             { "width": "15%", "data": "created_user", "title": "USER", },
             {
                 "width": "15%", "data": function (source, type, val) {

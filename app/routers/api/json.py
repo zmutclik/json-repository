@@ -8,7 +8,7 @@ from app.repositories import Repository, FolderRepository, DocumentRepository
 from .__helper import get_repo, get_folder
 from app.services.__system__.auth import get_active_user
 from app.services.document import DocumentSave, DocumentOpen, DocumentCalculateSize
-from app.schemas.document import DocumentSchemas, DocumentUpload
+from app.schemas.document import DocumentSchemas, DocumentUpload, DocumentUpdate, DocumentSchemasSave
 from app.repositories import Repository, FolderRepository, DocumentRepository
 import threading
 
@@ -48,9 +48,8 @@ async def upload_document(dataIn: DocumentUpload, req: Request, c_user: c_user_s
         document_label = document_key
 
     refserver_id, document_size, document_path = DocumentSave(dataIn.data, repo_.key, fold_.key, document_key)
-    document_data = DocumentSchemas(
+    document_data = DocumentSchemasSave(
         folder_id=fold_.id,
-        folder_key=fold_.key,
         repo_key=repo_.key,
         size=document_size,
         key=document_key,
@@ -76,6 +75,21 @@ async def upload_document(dataIn: DocumentUpload, req: Request, c_user: c_user_s
     return document
 
 
+@router.put("/{repo}/{key}", response_model=DocumentSchemas, summary="Update Label Document JSON ")
+def update_nama_label(dataIn: DocumentUpdate, repo: str, key: str, req: Request, c_user: c_user_scope, db=db):
+    """
+    - **User Access** : diganakan untuk LOG user yang akses Dokumen ini
+    - **repo** : Repository Key atau bisa juga berisi Nama Repository
+    - **folder** : Folder Key atau bisa juga berisi Nama Folder
+    """
+    repo_ = get_repo(Repository(db), repo)
+    file = DocumentRepository(db).getKey(key)
+    if file is None:
+        raise HTTPException(status_code=400, detail="File Tidak ada.")
+
+    return DocumentRepository(db).update(file.id, {"label": dataIn.label})
+
+
 @router.get("/folder/{user_access}/{repo}/{folder}", response_model=Dict, summary="Get All Document JSON in Folder")
 def get_in_folder(repo: str, folder: str, user_access: str, req: Request, db=db):
     """
@@ -93,7 +107,7 @@ def get_in_folder(repo: str, folder: str, user_access: str, req: Request, db=db)
 
 
 @router.get("/{user_access}/{repo}/{key}", response_model=Dict, summary="Get Single Document JSON")
-def get_single(repo: str, key: str, req: Request, db=db):
+def get_single(repo: str, key: str, user_access: str, req: Request, db=db):
     """
     - **User Access** : diganakan untuk LOG user yang akses Dokumen ini
     - **repo** : Repository Key atau bisa juga berisi Nama Repository
@@ -107,7 +121,7 @@ def get_single(repo: str, key: str, req: Request, db=db):
 
 
 @router.get("/{user_access}/{repo}/{folder}/{document}", response_model=Dict, summary="Get Single Document JSON")
-def get_single_dgn_label(repo: str, folder: str, document: str, req: Request, db=db):
+def get_single_dgn_label(repo: str, folder: str, document: str, user_access: str, req: Request, db=db):
     """
     - **User Access** : diganakan untuk LOG user yang akses Dokumen ini
     - **repo** : Repository Key atau bisa juga berisi Nama Repository

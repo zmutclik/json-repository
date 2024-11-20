@@ -21,6 +21,14 @@ class RepositoryTable(Base):
     created_user = Column(String(50), nullable=False)
     deleted_user = Column(String(50), nullable=True)
 
+    @hybrid_property
+    def count(self) -> str:
+        return self._SIZE.count
+
+    @hybrid_property
+    def size(self) -> str:
+        return self._SIZE.size
+
     _SIZE = relationship("RepositorySizeTable", back_populates="_FOLDER", uselist=False)
 
 

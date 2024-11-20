@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Request, Security, Depends
+from fastapi import APIRouter, Request, Security, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.db.app import get_db
 
@@ -37,5 +37,9 @@ def update(repo: str, folder: str, dataIn: FolderUpdate, req: Request, c_user: c
     """
     repo_ = get_repo(Repository(db), repo)
     fold_ = get_folder(FolderRepository(db), folder)
+
+    folder = FolderRepository(db).getFolder(dataIn.folder)
+    if folder is not None:
+        raise HTTPException(status_code=400, detail="Nama Folder Sudah ada yang Menggunakan.")
 
     return FolderRepository(db).update(fold_.id, {"folder": dataIn.folder})

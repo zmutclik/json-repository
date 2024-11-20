@@ -31,7 +31,6 @@ class DocumentRepository:
             return passkey
 
     def create(self, dataIn: dict):
-        dataIn.pop("folder_key")
         data = MainTable(**dataIn)
         self.session.add(data)
         self.session.commit()

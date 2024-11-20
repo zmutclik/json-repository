@@ -62,6 +62,14 @@ class FolderTable(Base):
     created_user = Column(String(50), nullable=False)
     deleted_user = Column(String(50), nullable=True)
 
+    @hybrid_property
+    def count(self) -> str:
+        return self._SIZE.count
+
+    @hybrid_property
+    def size(self) -> str:
+        return self._SIZE.size
+
     _FILES = relationship("FilesTable", back_populates="_FOLDER")
     _SIZE = relationship("FolderSizeTable", back_populates="_FOLDER", uselist=False)
 

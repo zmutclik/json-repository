@@ -118,14 +118,42 @@ if os.path.exists(DB_FILE):
                 db.add(
                     MenuTable(
                         **{
+                            "text": "Daftar Gudang",
+                            "href": "/page/data/",
+                            "segment": "data",
+                            "icon": "fas fa-store",
+                            "icon_color": "",
+                            "sort": 2,
+                            "menutype_id": 1,
+                            "parent_id": 0,
+                        }
+                    )
+                )
+                db.add(
+                    MenuTable(
+                        **{
                             "text": "System",
                             "segment": "system",
                             "href": "#",
                             "icon": "fas fa-cogs",
                             "icon_color": "",
-                            "sort": 2,
+                            "sort": 3,
                             "menutype_id": 1,
                             "parent_id": 0,
+                        }
+                    )
+                )
+                db.add(
+                    MenuTable(
+                        **{
+                            "text": "Repository",
+                            "segment": "repository",
+                            "href": "/page/repository/",
+                            "icon_color": "",
+                            "icon": "fas fa-store",
+                            "sort": 1,
+                            "menutype_id": 1,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -137,9 +165,9 @@ if os.path.exists(DB_FILE):
                             "href": "/page/users/",
                             "icon_color": "",
                             "icon": "lni lni-user",
-                            "sort": 1,
+                            "sort": 2,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -151,9 +179,9 @@ if os.path.exists(DB_FILE):
                             "href": "/page/menu/",
                             "icon_color": "",
                             "icon": "lni lni-menu",
-                            "sort": 2,
+                            "sort": 3,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -165,9 +193,9 @@ if os.path.exists(DB_FILE):
                             "href": "/page/scopes/",
                             "icon": "lni lni-map-marker",
                             "icon_color": "",
-                            "sort": 3,
+                            "sort": 4,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -179,23 +207,23 @@ if os.path.exists(DB_FILE):
                             "href": "/page/groups/",
                             "icon": "lni lni-map-marker",
                             "icon_color": "",
-                            "sort": 4,
+                            "sort": 5,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
                 db.add(
                     MenuTable(
                         **{
-                            "text": "Repository",
-                            "segment": "repository",
-                            "href": "/page/repository/",
+                            "text": "Gudang Link",
+                            "segment": "system_gudanglink",
+                            "href": "/page/system/repository/",
                             "icon": "lni lni-link",
                             "icon_color": "",
-                            "sort": 5,
+                            "sort": 6,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -207,9 +235,9 @@ if os.path.exists(DB_FILE):
                             "href": "/page/systemsettings/",
                             "icon": "lni lni-cog",
                             "icon_color": "",
-                            "sort": 6,
+                            "sort": 7,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -221,9 +249,9 @@ if os.path.exists(DB_FILE):
                             "href": "/page/logs/",
                             "icon": "lni lni-travel",
                             "icon_color": "",
-                            "sort": 7,
+                            "sort": 8,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                         }
                     )
                 )
@@ -235,7 +263,7 @@ if os.path.exists(DB_FILE):
                             "href": "/page/documentation",
                             "icon": "lni lni-files",
                             "icon_color": "",
-                            "sort": 3,
+                            "sort": 4,
                             "menutype_id": 1,
                             "parent_id": 0,
                         }
