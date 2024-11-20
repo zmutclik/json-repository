@@ -42,19 +42,25 @@ def page_js(req: req_nonAuth, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models import RepositoryTable
+from app.models import RepositoryTable, RepositorySizeTable
 from sqlalchemy import select, func, desc
 from datatables import DataTable
 
 
 @router.post("/{cId}/{sId}/datatables", status_code=202, include_in_schema=False)
 def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
-    query = select(
-        RepositoryTable,
-        RepositoryTable.id.label("DT_RowId"),
-        func.row_number().over(order_by=desc(RepositoryTable.created_at)).label("row_number"),
-    ).filter(
-        RepositoryTable.deleted_at == None,
+    query = (
+        select(
+            RepositoryTable,
+            RepositorySizeTable.size,
+            RepositorySizeTable.count,
+            RepositoryTable.id.label("DT_RowId"),
+            func.row_number().over(order_by=desc(RepositoryTable.created_at)).label("row_number"),
+        )
+        .join(RepositoryTable._SIZE)
+        .filter(
+            RepositoryTable.deleted_at == None,
+        )
     )
 
     datatable: DataTable = DataTable(
@@ -66,6 +72,8 @@ def get_datatables(params: dict[str, Any], req: req_depends, c_user: c_user_scop
             "key",
             "repository",
             "desc",
+            "size",
+            "count",
             "created_at",
             "row_number",
         ],

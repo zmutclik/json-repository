@@ -43,7 +43,7 @@ def page_js(repo_key: str, req: req_nonAuth, pathFile: PathJS):
 
 
 ###DATATABLES##########################################################################################################
-from app.models import FolderTable
+from app.models import FolderTable, FolderSizeTable
 from sqlalchemy import select, func, desc
 from datatables import DataTable
 from app.core import config
@@ -52,11 +52,17 @@ from app.core.db.app import engine_db
 
 @router.post("/{cId}/{sId}/{repo_key}/datatables", status_code=202, include_in_schema=False)
 def get_datatables(repo_key: str, params: dict[str, Any], req: req_depends, c_user: c_user_scope) -> dict[str, Any]:
-    query = select(
-        FolderTable,
-        FolderTable.id.label("DT_RowId"),
-        func.row_number().over(order_by=desc(FolderTable.created_at)).label("row_number"),
-    ).filter(FolderTable.deleted_at == None, FolderTable.repo_key == repo_key)
+    query = (
+        select(
+            FolderTable,
+            FolderSizeTable.size,
+            FolderSizeTable.count,
+            FolderTable.id.label("DT_RowId"),
+            func.row_number().over(order_by=desc(FolderTable.created_at)).label("row_number"),
+        )
+        .join(FolderTable._SIZE)
+        .filter(FolderTable.deleted_at == None, FolderTable.repo_key == repo_key)
+    )
     datatable: DataTable = DataTable(
         request_params=params,
         table=query,
@@ -66,6 +72,8 @@ def get_datatables(repo_key: str, params: dict[str, Any], req: req_depends, c_us
             "key",
             "repo_key",
             "folder",
+            "size",
+            "count",
             "updated_at",
             "created_at",
             "row_number",

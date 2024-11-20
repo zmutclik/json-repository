@@ -48,7 +48,7 @@ def page_js(repo_key: str, folder_key: str, req: req_nonAuth, pathFile: PathJS):
 
 
 @router.get("/{cId}/{sId}/{repo_key}/{folder_key}/{key}", response_model=Dict)
-def page_js(repo_key: str, folder_key: str, key: str, req: req_page, db=db):
+def get_data(repo_key: str, folder_key: str, key: str, req: req_page, db=db):
     repo = Repository(db).getKey(repo_key)
     if repo is None:
         raise HTTPException(status_code=400, detail="Repo Tidak ada.")
@@ -58,7 +58,8 @@ def page_js(repo_key: str, folder_key: str, key: str, req: req_page, db=db):
     file = DocumentRepository(db).getKey(key)
     if file is None:
         raise HTTPException(status_code=400, detail="Data Tidak ada.")
-    return DocumentOpen(repo_key, folder_key, key)
+
+    return DocumentOpen(file.path, key)
 
 
 ###DATATABLES##########################################################################################################
@@ -86,8 +87,10 @@ def get_datatables(repo_key: str, folder_key: str, params: dict[str, Any], req: 
             "key",
             "repo_key",
             "label",
+            "size",
             "updated_at",
             "created_at",
+            "created_user",
             "row_number",
         ],
         engine=engine_db,

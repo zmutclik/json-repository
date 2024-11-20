@@ -1,6 +1,7 @@
 from datetime import datetime
+from sqlalchemy import func
 from sqlalchemy.orm import Session
-from app.models import FilesTable as MainTable
+from app.models import FilesTable as MainTable, FilesSaveTable as SizeTable
 from key_generator.key_generator import generate as key_generator
 from app.core.config import config
 
@@ -18,6 +19,9 @@ class DocumentRepository:
     def getKey(self, key: str):
         return self.session.query(MainTable).filter(MainTable.key == key, MainTable.deleted_at == None).first()
 
+    def getLabel(self, folder_id: int, label: str):
+        return self.session.query(MainTable).filter(MainTable.folder_id == folder_id, MainTable.label == label, MainTable.deleted_at == None).first()
+
     def create_key(self):
         passkey = key_generator(1, "", config.MIN_KEY, config.MAX_KEY, type_of_value="hex", capital="mix", extras=[]).get_key()
         check_db = self.getKey(passkey)
@@ -26,17 +30,21 @@ class DocumentRepository:
         else:
             return passkey
 
-    def create_random(self, repo_key: str, created_user: str):
-        folder_data = {"repo_key": repo_key, "key": self.create_key(), "created_user": created_user}
-        folder_data["folder"] = folder_data["key"]
-        return self.create(folder_data)
-
     def create(self, dataIn: dict):
         dataIn.pop("folder_key")
         data = MainTable(**dataIn)
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
+
+        return data
+
+    def createSize(self, dataIn: dict):
+        data = SizeTable(**dataIn)
+        self.session.add(data)
+        self.session.commit()
+        self.session.refresh(data)
+
         return data
 
     def update(self, id: int, dataIn: dict):

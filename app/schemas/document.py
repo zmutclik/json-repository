@@ -6,8 +6,8 @@ from datetime import datetime
 class DocumentSchemas(BaseModel):
     id: Optional[int] = Field(default=None, exclude=False)
     folder_id: Optional[int] = Field(exclude=False)
-    repo_key: Optional[str] = Field(examples=["r3p0_k3y"])
-    folder_key: Optional[str] = Field(examples=["F0ld3r_k3y"])
+    repo_key: Optional[str] = Field(examples=["r3p0k3y"])
+    folder_key: Optional[str] = Field(examples=["F0ld3rk3y"])
     key: Optional[str] = Field(examples=["k3y"])
     label: str = Field(examples=["nama_file"])
     path: str = Field(default="", exclude=False)

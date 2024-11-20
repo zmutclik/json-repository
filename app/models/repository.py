@@ -20,3 +20,16 @@ class RepositoryTable(Base):
     deleted_at = Column(TIMESTAMP, nullable=True)
     created_user = Column(String(50), nullable=False)
     deleted_user = Column(String(50), nullable=True)
+
+    _SIZE = relationship("RepositorySizeTable", back_populates="_FOLDER", uselist=False)
+
+
+class RepositorySizeTable(Base):
+    __tablename__ = "repository_size"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    repo_id = Column(Integer, ForeignKey("repository.id"), index=True)
+
+    size = Column(Integer)
+    count = Column(Integer)
+
+    _FOLDER = relationship("RepositoryTable", back_populates="_SIZE")

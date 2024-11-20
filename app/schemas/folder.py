@@ -13,5 +13,5 @@ class FolderData(FolderSchemas):
     id: int
 
 
-class FolderSave(FolderSchemas):
-    created_user: Optional[str] = None
+class FolderUpdate(BaseModel):
+    folder: str

@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from app.core import config
 
-from app.models import RepositoryTable, RefServerTable, FolderTable, FolderSizeTable, FilesTable, FilesSaveTable
+from app.models import RepositoryTable, RepositorySizeTable, RefServerTable, FolderTable, FolderSizeTable, FilesTable, FilesSaveTable
 
 # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_textual_sql.htm
 engine_db = create_engine(config.DATABASE)
@@ -15,6 +15,7 @@ SessionLocal.configure(
         RefServerTable: engine_db,
         #############################################
         RepositoryTable: engine_db,
+        RepositorySizeTable: engine_db,
         FolderTable: engine_db,
         FolderSizeTable: engine_db,
         FilesTable: engine_db,
@@ -25,6 +26,10 @@ if not engine_db.dialect.has_table(table_name="repository", connection=conn_db):
     from . import Base
 
     Base.metadata.create_all(bind=engine_db)
+    with engine_db.begin() as connection:
+        with Session(bind=connection) as db:
+            db.add(RefServerTable(**{"name": "local", "metode": "local", "path": "files/database/json", "created_user": "init"}))
+            db.commit()
 
 
 # Dependency

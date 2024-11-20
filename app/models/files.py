@@ -15,7 +15,7 @@ class FilesTable(Base):
     folder_id = Column(Integer, ForeignKey("folder.id"), index=True)
 
     key = Column(String(32), unique=True, index=True)
-    label = Column(String(32), unique=True, index=True)
+    label = Column(String(32), index=True)
     path = Column(String(256))
     size = Column(Integer)
 
@@ -36,6 +36,8 @@ class FilesTable(Base):
 class FilesSaveTable(Base):
     __tablename__ = "files_save"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    repo_id = Column(Integer, index=True)
+    folder_id = Column(Integer, index=True)
     files_id = Column(Integer, ForeignKey("files.id"), index=True)
 
     size = Column(Integer)
@@ -67,8 +69,10 @@ class FolderTable(Base):
 class FolderSizeTable(Base):
     __tablename__ = "folder_size"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    repo_id = Column(Integer, index=True)
     folder_id = Column(Integer, ForeignKey("folder.id"), index=True)
 
     size = Column(Integer)
+    count = Column(Integer)
 
     _FOLDER = relationship("FolderTable", back_populates="_SIZE")

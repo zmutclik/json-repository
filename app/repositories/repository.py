@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-from app.models import RepositoryTable as MainTable
+from app.models import RepositoryTable as MainTable, RepositorySizeTable as SizeTable
 from key_generator.key_generator import generate as key_generator
 from app.core.db.repo import create_folder
 from app.core.config import config
@@ -37,6 +37,10 @@ class Repository:
         self.session.refresh(data)
 
         create_folder(data.key)
+
+        size = SizeTable(**{"repo_id": data.id, "size": 0, "count": 0})
+        self.session.add(size)
+        self.session.commit()
 
         return data
 

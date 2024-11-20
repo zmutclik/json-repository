@@ -74,6 +74,7 @@
 
 {% include 'includes/_all_javascripts.html' %}
 {% include 'includes/_page_javascripts.html' %}
+<script src="https://cdn.filesizejs.com/filesize.min.js"></script>
 <!-- ------------------- -->
 <script>const api = axios.create({ baseURL: '/page/data/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
 <script src="/page/data/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>

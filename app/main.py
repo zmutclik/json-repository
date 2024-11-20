@@ -39,6 +39,11 @@ from app.routers import api, pages, root
 app.mount("/static", StaticFiles(directory="files/static", html=False), name="static")
 
 
+## MAIN PAGE ###
+app.mount("/page", pages.app)
+app.include_router(pages.loginPage)
+app.include_router(pages.registerPage)
+
 ### MAIN API ###
 app.include_router(root.router)
 app.include_router(api.token)
@@ -46,11 +51,6 @@ app.include_router(api.me)
 app.include_router(api.repo)
 app.include_router(api.folder)
 app.include_router(api.json)
-
-## MAIN PAGE ###
-app.mount("/page", pages.app)
-app.include_router(pages.loginPage)
-app.include_router(pages.registerPage)
 
 
 ###################################################################################################################

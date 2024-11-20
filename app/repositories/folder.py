@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-from app.models import FolderTable as MainTable
+from app.models import FolderTable as MainTable, FolderSizeTable as SizeTable
 from key_generator.key_generator import generate as key_generator
 from app.core.config import config
 
@@ -29,16 +29,24 @@ class FolderRepository:
         else:
             return passkey
 
-    def create_random(self, repo_key: str, created_user: str):
+    def create_random(self, repo_id: int, repo_key: str, created_user: str, folder_name: str = None):
         folder_data = {"repo_key": repo_key, "key": self.create_key(), "created_user": created_user}
-        folder_data["folder"] = folder_data["key"]
-        return self.create(folder_data)
+        if folder_name is None:
+            folder_data["folder"] = folder_data["key"]
+        else:
+            folder_data["folder"] = folder_name
+        return self.create(repo_id, folder_data)
 
-    def create(self, dataIn):
+    def create(self, repo_id: int, dataIn):
         data = MainTable(**dataIn)
         self.session.add(data)
         self.session.commit()
         self.session.refresh(data)
+
+        size = SizeTable(**{"repo_id": repo_id, "folder_id": data.id, "size": 0, "count": 0})
+        self.session.add(size)
+        self.session.commit()
+
         return data
 
     def update(self, id: int, dataIn: dict):

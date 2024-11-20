@@ -126,6 +126,8 @@
 {% include 'includes/_all_javascripts.html' %}
 {% include 'includes/_page_javascripts.html' %}
 <script src="/static/assets/js/jquery.json-viewer.js"></script>
+<script src="https://cdn.filesizejs.com/filesize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
 <!-- ------------------- -->
 <script>const api = axios.create({ baseURL: '/page/document/{{clientId}}/{{sessionId}}/{{repo_key}}/{{folder_key}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
 <script src="/page/document/{{clientId}}/{{sessionId}}/{{app_version}}/{{repo_key}}/{{folder_key}}/index.js"></script>

@@ -4,11 +4,11 @@ from datetime import datetime
 
 
 class RepositorySchemas(BaseModel):
-    id: Optional[int] = Field(default=None, exclude=True)
-    key: Optional[str] = Field(examples=["k3y"])
+    id: Optional[int] = Field(default=None, exclude=False)
+    key: Optional[str] = Field(default=None, examples=["k3y"])
     repository: str = Field(examples=["repository"])
     desc: str = Field(examples=["description of repo"])
-    created_user: Optional[str] = Field(default=None, exclude=True)
+    created_user: Optional[str] = Field(default=None, exclude=False)
 
 
 class RepositoryDataPut(BaseModel):

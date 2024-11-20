@@ -7,7 +7,7 @@ def get_repo(repo: Repository, repo_search):
     if data is None:
         data = repo.getRepo(repo_search)
     if data is None:
-        raise HTTPException(status_code=400, detail="Data Tida ada.")
+        raise HTTPException(status_code=400, detail="Repository Tida ada.")
     return data
 
 
@@ -16,5 +16,5 @@ def get_folder(repo: FolderRepository, folder_search):
     if data is None:
         data = repo.getFolder(folder_search)
     if data is None:
-        raise HTTPException(status_code=400, detail="Data Tida ada.")
+        raise HTTPException(status_code=400, detail="Folder Tida ada.")
     return data

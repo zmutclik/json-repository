@@ -2,10 +2,12 @@ import re, os, json
 from typing import Union
 from datetime import datetime
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 from app.repositories import RefServerRepository
+from app.models import FilesSaveTable, FolderSizeTable, RepositorySizeTable
 from app.core.db.app import engine_db, get_db
 
 
@@ -46,7 +48,8 @@ def DocumentSave(dataJSON: dict, repo_key: str, folder_key: str, key: str, creat
             with open(filePath, "w") as outfile:
                 json.dump(dataJSON, outfile)
 
-            return path
+            fileSize = os.path.getsize(filePath)
+            return refserver.id, fileSize, path
 
 
 def DocumentOpen(file_path: str, key: str):
@@ -63,3 +66,22 @@ def DocumentOpen(file_path: str, key: str):
 
             with open(filePath, "r") as file:
                 return json.load(file)
+
+
+def DocumentCalculateSize(folder_id: int, repo_id: int):
+    with engine_db.begin() as connection:
+        with Session(bind=connection) as db:
+            folderSize = (
+                db.query(func.sum(FilesSaveTable.size).label("size"), func.count(FilesSaveTable.id).label("count"))
+                .filter(FilesSaveTable.folder_id == folder_id)
+                .first()
+            )
+            db.query(FolderSizeTable).filter(FolderSizeTable.folder_id == folder_id).update({"size": folderSize.size, "count": folderSize.count})
+            db.commit()
+            repoSize = (
+                db.query(func.sum(FolderSizeTable.size).label("size"), func.sum(FolderSizeTable.count).label("count"))
+                .filter(FolderSizeTable.repo_id == repo_id)
+                .first()
+            )
+            db.query(RepositorySizeTable).filter(RepositorySizeTable.repo_id == repo_id).update({"size": repoSize.size, "count": repoSize.count})
+            db.commit()
