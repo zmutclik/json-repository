@@ -1,0 +1,44 @@
+FROM ubuntu:jammy
+LABEL maintainer="Fahrudin Hariadi<fahrudin.hariadi@gmail.com>"
+ARG DB_ROOTPASSWORD
+ARG DB_APPUSER
+ARG DB_APPPASS
+ARG DB_NAME
+
+ENV DATABASE_ROOTPASSWORD = ${DB_ROOTPASSWORD}
+ENV DATABASE_APP_USERNAME = ${DB_APPUSER}
+ENV DATABASE_APP_PASSWORD = ${DB_APPPASS}
+ENV DATABASE_NAME = ${DB_NAME}
+
+RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
+
+RUN apt update
+RUN apt -y upgrade
+
+RUN ln -snf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && echo Asia/Jakarta > /etc/timezone
+RUN apt-get install tzdata -y
+
+RUN apt -y install mariadb-server mariadb-client
+RUN apt -y install iproute2 nano iputils-ping lsb-release gnupg2 ca-certificates apt-transport-https software-properties-common gcc make autoconf libc-dev pkg-config logrotate
+
+RUN mkdir /backup
+RUN mkdir /backup/mysql
+RUN mkdir /backup/logs
+
+COPY config/init.sql /backup/mysql/
+RUN /etc/init.d/mariadb start ; sleep 10 ; bash -c "mysql --user='root' < /backup/mysql/init.sql"
+RUN rm /backup/mysql/init.sql
+
+COPY files/scripts/mysqlbackup.sh /backup/mysqlbackup.sh
+RUN chmod +x /backup/mysqlbackup.sh
+RUN chmod 755 /backup/mysql
+RUN touch /backup/logs/mysql_backup_cron.log
+
+RUN sed -i "s/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/gI" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+RUN rm /etc/ssl/openssl.cnf
+COPY ./files/samples/openssl.cnf /etc/ssl/openssl.cnf
+
+USER mysql
+
+CMD ["mariadbd"]
