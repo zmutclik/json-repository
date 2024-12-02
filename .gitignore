@@ -170,5 +170,6 @@ files/temp/*
 
 config/*
 !config/.gitkeep
-# !files/database/log/.gitkeep
-# !files/temp/.gitkeep
+
+files/database/data/*
+!files/database/data/.gitkeep

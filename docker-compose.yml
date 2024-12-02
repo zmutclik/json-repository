@@ -14,11 +14,11 @@ volumes:
       type: nfs
       o: addr=${NFS_IP},nfsvers=4
       device: ${NFS_BACKUP}
-  mysqldata:
-    driver_opts:
-      type: nfs
-      o: addr=${NFS_IP},nfsvers=4
-      device: ${NFS_MYDATA}
+  # mysqldata:
+  #   driver_opts:
+  #     type: nfs
+  #     o: addr=${NFS_IP},nfsvers=4
+  #     device: ${NFS_MYDATA}
 
 #######################################################################################################################
 services:
@@ -34,8 +34,8 @@ services:
     container_name: JSON_REPOSITORY_DB
     hostname: jsonrepositorydb
     volumes:
-      - "mysqldata:/var/lib/mysql/"
-      - "db_backup:/backup/mysql"
+      - "./files/database/data/:/var/lib/mysql/"
+      - "db_backup:/backup/"
       - "./config/db_backup.cnf:/etc/db_backup.cnf"
     dns:
       - ${DNS1}

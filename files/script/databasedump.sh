@@ -1,5 +1,5 @@
 #!/bin/bash
-MYSQL_ARGS="--defaults-extra-file=.my.cnf"
+MYSQL_ARGS="--defaults-extra-file=/etc/db_backup.cnf"
 MYSQL="/usr/bin/mariadb $MYSQL_ARGS "
 MYSQLDUMP="/usr/bin/mariadb-dump $MYSQL_ARGS "
 

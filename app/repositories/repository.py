@@ -36,7 +36,7 @@ class Repository:
         self.session.commit()
         self.session.refresh(data)
 
-        create_folder(data.key)
+        # create_folder(data.key)
 
         size = SizeTable(**{"repo_id": data.id, "size": 0, "count": 0})
         self.session.add(size)

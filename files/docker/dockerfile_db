@@ -31,7 +31,6 @@ RUN chmod 755 /backup/fullbackup
 COPY config/init.sql /backup/
 RUN /etc/init.d/mariadb start ; sleep 10 ; bash -c "mysql --user='root' < /backup/init.sql"
 RUN rm /backup/init.sql
-COPY config/db_backup.cnf /backup/.my.cnf
 
 COPY files/scripts/databasebackup.sh /backup/databasebackup.sh
 COPY files/scripts/install_backup.sh /backup/install_backup.sh
