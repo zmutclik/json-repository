@@ -33,8 +33,9 @@ RUN /etc/init.d/mariadb start ; sleep 10 ; bash -c "mysql --user='root' < /backu
 RUN rm /backup/init.sql
 
 COPY files/scripts/databasebackup.sh /backup/databasebackup.sh
+COPY files/scripts/databasedump.sh   /backup/databasedump.sh
 COPY files/scripts/install_backup.sh /backup/install_backup.sh
-COPY files/scripts/install_dump.sh /backup/install_dump.sh
+COPY files/scripts/install_dump.sh   /backup/install_dump.sh
 RUN chmod +x /backup/install_backup.sh
 RUN chmod +x /backup/install_dump.sh
 RUN /backup/install_backup.sh
