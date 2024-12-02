@@ -37,8 +37,8 @@ COPY files/scripts/install_backup.sh /backup/install_backup.sh
 COPY files/scripts/install_dump.sh /backup/install_dump.sh
 RUN chmod +x /backup/install_backup.sh
 RUN chmod +x /backup/install_dump.sh
-RUN ./backup/install_backup.sh
-RUN ./backup/install_dump.sh
+RUN /backup/install_backup.sh
+RUN /backup/install_dump.sh
 
 RUN sed -i "s/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/gI" /etc/mysql/mariadb.conf.d/50-server.cnf
 
