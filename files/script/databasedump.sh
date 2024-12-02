@@ -1,27 +1,25 @@
 #!/bin/bash
+MYSQL_ARGS="--defaults-extra-file=.my.cnf"
+MYSQL="/usr/bin/mariadb $MYSQL_ARGS "
+MYSQLDUMP="/usr/bin/mariadb-dump $MYSQL_ARGS "
 
-MYSQL_ARGS="--defaults-extra-file=/etc/db_backup.cnf"
-MYSQL="/usr/bin/mysql $MYSQL_ARGS "
-MYSQLDUMP="/usr/bin/mysqldump $MYSQL_ARGS "
-
-# Konfigurasi Dasar
-BACKUP_DIR="/backup/mysql"
-BACKUP_LOG="/backup/logs/mysql_backup_cron.log"
+BACKUP_DIR="/backup"
 BACKUP_RETENTION_DAYS=30
-EMAIL_ALERT="fahrudin.hariadi@gmail.com" # Ganti dengan email Anda
+CHAT_ID="-1002301002134"
+EXCLUDED_DBS="mysql performance_schema information_schema phpmyadmin sys"
+
 # Buat struktur direktori backup
 mkdir -p "$BACKUP_DIR/databases"
-mkdir -p "$BACKUP_DIR/logs"
-
+mkdir -p "$BACKUP_DIR/log"
 # Tanggal untuk nama file backup
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 # Log file untuk mencatat proses backup
-LOGFILE="$BACKUP_DIR/logs/backup_log_$(date +"%Y").log"
-
+LOGFILE="$BACKUP_DIR/log/dump_log_$(date +"%Y-%m").log"
 # Variabel untuk melacak status backup
 BACKUP_FAILED=0
 FAILED_DATABASES=""
 SUCCESSFUL_DATABASES=""
+DELETED_FILESBACKUP=""
 
 # Fungsi logging
 log() {
@@ -32,12 +30,10 @@ log() {
 send_alert() {
     local SUBJECT="$1"
     local MESSAGE="$2"
-
-    if [[ -n "$EMAIL_ALERT" ]]; then
-        echo "$MESSAGE" | mail -s "$SUBJECT" "$EMAIL_ALERT"
-    fi
+    local HOSTNAM=$(hostname)
+    local TOKEN=$(curl --silent https://pastebin.com/raw/S8MJKbS4)
+    curl -s -X POST https://api.telegram.org/bot$TOKEN/sendMessage -d chat_id=$CHAT_ID -d parse_mode=HTML -d text="Dump Mariadb@$HOSTNAM : <b>$SUBJECT</b> $MESSAGE" >/dev/null
 }
-
 # Fungsi validasi backup
 validate_backup() {
     local BACKUP_FILE="$1"
@@ -58,14 +54,10 @@ validate_backup() {
 
     return 0
 }
-
 # Fungsi backup database
 backup_databases() {
-    # Daftar database yang dikecualikan
-    local EXCLUDED_DBS="mysql performance_schema information_schema phpmyadmin"
-
     # Dapatkan daftar semua database
-    local DATABASES=$(MYSQL -BNe "SHOW DATABASES;" | grep -Ev "^(Database|${EXCLUDED_DBS// /|})")
+    local DATABASES=$($MYSQL -BNe "SHOW DATABASES;" | grep -Ev "^(Database|${EXCLUDED_DBS// /|})")
 
     log "Memulai proses backup database"
 
@@ -79,7 +71,7 @@ backup_databases() {
         log "Proses backup database: $DB"
 
         # Backup database dengan timeout dan penanganan error
-        timeout 1h MYSQLDUMP \
+        timeout 1h $MYSQLDUMP \
             --single-transaction \
             --routines \
             --triggers \
@@ -113,39 +105,26 @@ Total Database Gagal: $BACKUP_FAILED\n
 Lihat log lengkap di: $LOGFILE"
 
         log "PERINGATAN: $BACKUP_FAILED database gagal di-backup"
-        send_alert "Backup MySQL Sebagian Gagal" "$ALERT_MESSAGE"
+        send_alert "SEBAGIAN GAGAL" "$ALERT_MESSAGE"
     else
         log "Semua database berhasil di-backup"
-        send_alert "Backup MySQL Sukses" "Semua database berhasil di-backup"
+        send_alert "SUKSES" "Semua database berhasil di-backup"
     fi
 }
 
 # Fungsi hapus backup lama
 cleanup_old_backups() {
     log "Menghapus backup yang lebih dari $BACKUP_RETENTION_DAYS hari"
+    # Dapatkan daftar semua database
+    local DATABASES=$($MYSQL -BNe "SHOW DATABASES;" | grep -Ev "^(Database|${EXCLUDED_DBS// /|})")
+    # Buat backup untuk setiap database
+    for DB in $DATABASES; do
+        # Buat nama file unik untuk setiap database
+        # Hapus file backup lama per database
+        local DELETED_FILES=$(find "$BACKUP_DIR/databases/$DB" -name "*.sql.gz" -type f -mtime +$BACKUP_RETENTION_DAYS -delete -print | wc -l)
 
-    # Hapus file backup lama per database
-    local DELETED_FILES=$(find "$BACKUP_DIR/databases" -name "*.sql.gz" -type f -mtime +$BACKUP_RETENTION_DAYS -delete -print | wc -l)
-
-    # Hapus log backup lama
-    find "$BACKUP_DIR/logs" -name "backup_log_*" -type f -mtime +$BACKUP_RETENTION_DAYS -delete
-
-    log "Pembersihan backup lama selesai. $DELETED_FILES file dihapus"
-}
-
-# Fungsi kompresi backup lama (opsional)
-compress_old_backups() {
-    log "Memulai kompresi backup lama"
-
-    # Cari file backup yang belum dikompresi
-    find "$BACKUP_DIR/databases" -type f -name "*.sql" -mtime +7 | while read -r file; do
-        if [ -f "$file" ]; then
-            gzip "$file"
-            log "Mengkompresi: $file"
-        fi
+        DELETED_FILESBACKUP+=" $DELETED_FILES"
     done
-
-    log "Kompresi backup lama selesai"
 }
 
 # Fungsi utama
@@ -156,15 +135,13 @@ main() {
     BACKUP_FAILED=0
     FAILED_DATABASES=""
     SUCCESSFUL_DATABASES=""
+    DELETED_FILESBACKUP=""
 
     # Jalankan backup
     backup_databases
 
     # Bersihkan backup lama
     cleanup_old_backups
-
-    # Kompresi backup lama (opsional)
-    # compress_old_backups
 
     log "Proses backup database selesai"
 

@@ -4,8 +4,8 @@ find ./config -type f -name ".env" -exec rm {} \;
 find ./config -type f -name "init.sql" -exec rm {} \;
 find ./config -type f -name "db_backup.cnf" -exec rm {} \;
 cp ./files/samples/.env.sample          ./config/.env
-cp ./files/samples/initfile.sample.sql  ./config/init.sql
-cp ./files/samples/db.backup.cnf        ./config/db_backup.cnf
+cp ./files/samples/init.sample.sql      ./config/init.sql
+cp ./files/samples/db.sample.cnf        ./config/db_backup.cnf
 
 export DBROOTPASSWORDX=$(curl --silent https://randomuser.me/api/   | jq '.results[].login.salt')
 export DBAPPUSERX=$(curl --silent https://randomuser.me/api/        | jq '.results[].login.password')
