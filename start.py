@@ -6,10 +6,10 @@ import argparse
 from subprocess import Popen
 
 #######################################################################################################################
-if not os.access("files/database/db/.gitkeep", os.W_OK):
+if not os.access("config/.gitkeep", os.W_OK):
     print("===ERROR===")
     print("===ERROR===")
-    sys.exit('Tolong Buat Folder "Files/database/db" menjadi Writable.')
+    sys.exit('Tolong Buat Folder "config" menjadi Writable.')
 #######################################################################################################################
 # parser = argparse.ArgumentParser(description="Start Applikasi.", epilog="Pilih Module yang mau diJalankan.")
 # parser.add_argument("module", help="Pilih salah satu = ws, celery atau fower")
