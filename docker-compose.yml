@@ -34,7 +34,7 @@ services:
     container_name: JSON_REPOSITORY_DB
     hostname: jsonrepositorydb
     volumes:
-      # - "./files/database/data/:/var/lib/mysql/"
+      - "./files/database/data/:/var/lib/mysql/"
       - "db_backup:/backup/"
       - "./config/db_backup.cnf:/etc/db_backup.cnf"
     dns:
@@ -54,7 +54,7 @@ services:
     volumes:
       - "./:/code/"
       - "app_config:/code/config"
-      - "files_json:/code/files/database"
+      - "files_json:/code/files/database/json"
     dns:
       - ${DNS1}
       - ${DNS2}
