@@ -25,7 +25,9 @@ APP_PORT = os.environ.get("APP_PORT", "8015")
 
 if __name__ == "__main__":
     ###################################################################################################################
-    print("APP_ENV : ", APP_ENV)
+    print("APP_ENV  : ", APP_ENV)
+    print("APP_URL  : ", APP_URL)
+    print("APP_PORT : ", APP_PORT)
     if APP_ENV == "PRODUCTION":
         uvicorn.run(
             "app:app",
