@@ -21,14 +21,16 @@ RUN apt-get install tzdata -y
 RUN apt-get install ghostscript -y
 RUN apt clean --dry-run
 
+RUN python -m venv /venv
+
 COPY ./requirements.txt /code/requirements.txt
 
-RUN python3 -m pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN /venv/bin/python3 -m pip install --upgrade pip
+RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 RUN rm /etc/ssl/openssl.cnf
 COPY ./files/samples/openssl.cnf /etc/ssl/openssl.cnf
 
 USER semut
 
-CMD ["python", "/code/start.py"]
+CMD ["/venv/bin/python3", "/code/start.py"]
