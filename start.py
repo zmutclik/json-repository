@@ -36,7 +36,6 @@ if __name__ == "__main__":
             reload_dirs=["app"],
             workers=2,
             log_level="warning",
-            no_access_log=True,
             reload=True,
         )
     else:
