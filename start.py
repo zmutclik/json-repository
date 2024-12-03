@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 import argparse
 from subprocess import Popen
 
+# #######################################################################################################################
+if not os.access("config/.gitkeep", os.W_OK):
+    os.chmod("/code/config/", 0o0777)
 #######################################################################################################################
 # parser = argparse.ArgumentParser(description="Start Applikasi.", epilog="Pilih Module yang mau diJalankan.")
 # parser.add_argument("module", help="Pilih salah satu = ws, celery atau fower")

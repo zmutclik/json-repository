@@ -31,7 +31,4 @@ RUN /venv/bin/python3 -m pip install --no-cache-dir --upgrade -r /code/requireme
 RUN rm /etc/ssl/openssl.cnf
 COPY ./files/samples/openssl.cnf /etc/ssl/openssl.cnf
 
-RUN chmod 777 /code/config/
-USER semut
-
 CMD ["/venv/bin/python3", "/code/start.py"]
