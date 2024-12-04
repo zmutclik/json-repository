@@ -32,20 +32,17 @@ COPY config/init.sql /backup/
 RUN /etc/init.d/mariadb start ; sleep 10 ; bash -c "mysql --user='root' < /backup/init.sql"
 RUN rm /backup/init.sql
 
-COPY files/scripts/databasebackup.sh /backup/databasebackup.sh
-COPY files/scripts/databasedump.sh   /backup/databasedump.sh
-COPY files/scripts/install_backup.sh /backup/install_backup.sh
-COPY files/scripts/install_dump.sh   /backup/install_dump.sh
-RUN chmod +x /backup/install_backup.sh
-RUN chmod +x /backup/install_dump.sh
-RUN /backup/install_backup.sh
-RUN /backup/install_dump.sh
+COPY files/scripts/databasebackup.sh /backup/databasebackup.sh | chmod +x /backup/databasebackup.sh
+COPY files/scripts/databasedump.sh   /backup/databasedump.sh | chmod +x /backup/databasedump.sh
+COPY files/scripts/install_backup.sh /backup/install_backup.sh | chmod +x /backup/install_backup.sh | /backup/install_backup.sh
+COPY files/scripts/install_dump.sh   /backup/install_dump.sh | chmod +x /backup/install_dump.sh | /backup/install_dump.sh
 
 RUN sed -i "s/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/gI" /etc/mysql/mariadb.conf.d/50-server.cnf
 
 RUN rm /etc/ssl/openssl.cnf
 COPY ./files/samples/openssl.cnf /etc/ssl/openssl.cnf
+COPY ./files/scripts/start_docker_db.sh /boot/start.sh | chmod +x /boot/start.sh
 
 USER mysql
 
-CMD ["mariadbd"]
+CMD ["/boot/start.sh"]
